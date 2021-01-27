@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwl.backendmanager.authority.dao.SysLogDao">
+  <resultMap id="BaseResultMap" type="com.lwl.backendmanager.authority.bean.DO.SysLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="operator" jdbcType="VARCHAR" property="operator" />
+    <result column="operator_type" jdbcType="TINYINT" property="operatorType" />
+    <result column="operator_time" jdbcType="TIMESTAMP" property="operatorTime" />
+    <result column="operator_id" jdbcType="VARCHAR" property="operatorId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, `operator`, operator_type, operator_time, operator_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from sys_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.lwl.backendmanager.authority.bean.DO.SysLog" useGeneratedKeys="true">
+    insert into sys_log (`operator`, operator_type, operator_time, 
+      operator_id)
+    values (#{operator,jdbcType=VARCHAR}, #{operatorType,jdbcType=TINYINT}, #{operatorTime,jdbcType=TIMESTAMP}, 
+      #{operatorId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.lwl.backendmanager.authority.bean.DO.SysLog" useGeneratedKeys="true">
+    insert into sys_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="operator != null">
+        `operator`,
+      </if>
+      <if test="operatorType != null">
+        operator_type,
+      </if>
+      <if test="operatorTime != null">
+        operator_time,
+      </if>
+      <if test="operatorId != null">
+        operator_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="operator != null">
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorType != null">
+        #{operatorType,jdbcType=TINYINT},
+      </if>
+      <if test="operatorTime != null">
+        #{operatorTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lwl.backendmanager.authority.bean.DO.SysLog">
+    update sys_log
+    <set>
+      <if test="operator != null">
+        `operator` = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorType != null">
+        operator_type = #{operatorType,jdbcType=TINYINT},
+      </if>
+      <if test="operatorTime != null">
+        operator_time = #{operatorTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operatorId != null">
+        operator_id = #{operatorId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lwl.backendmanager.authority.bean.DO.SysLog">
+    update sys_log
+    set `operator` = #{operator,jdbcType=VARCHAR},
+      operator_type = #{operatorType,jdbcType=TINYINT},
+      operator_time = #{operatorTime,jdbcType=TIMESTAMP},
+      operator_id = #{operatorId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
