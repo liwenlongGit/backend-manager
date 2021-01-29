@@ -57,7 +57,7 @@ public class ResourceController {
     }
 
     @PostMapping(value = "/update")
-    public String updateResource(MResource resource){
+    public String updateResource(@RequestBody MResource resource){
         int updateResource = service.updateResource(resource);
         ResponseData data = new ResponseData();
         if (updateResource == 1){

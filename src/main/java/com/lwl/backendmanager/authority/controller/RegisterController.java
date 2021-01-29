@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -151,7 +152,8 @@ public class RegisterController {
             byte[] bytes = file.getBytes();
             System.out.println(bytes.length);
             String filename = file.getOriginalFilename();
-            String str_path = "D:\\project\\idea\\backend-manager\\src\\main\\resources\\static\\img";
+//            String str_path = "D:\\project\\idea\\backend-manager\\src\\main\\resources\\static\\img";
+            String str_path = Thread.currentThread().getContextClassLoader().getResource("").getPath()+"static/img/";
             file.transferTo(new File(str_path,filename));
             //修改用户头像信息
             MUser user = (MUser) request.getSession().getAttribute("user");

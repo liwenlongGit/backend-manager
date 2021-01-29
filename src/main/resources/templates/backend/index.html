@@ -29,7 +29,7 @@
     <div class="layui-layout layui-layout-admin">
         <!--顶部菜单-->
         <div class="layui-header">
-            <img src="/img/brand/brand.jpg" style="width: 50px;height: 50px;margin-top: 5px;margin-left: 20px">
+            <a href="/index"><img src="/img/brand/brand.jpg" style="width: 50px;height: 50px;margin-top: 5px;margin-left: 20px"></a>
             <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
                 <li class="layui-nav-item layui-hide-xs" lay-unselect="">
                     <a href="javascript:;"><img th:src="@{${user.headPhoto}}" class="layui-nav-img"><span th:text = "${user.snake}"></span></a>
@@ -105,7 +105,11 @@
                 $.ajax({
                     url: url_tmp,
                     success: function (data) {
+                        console.log("进入成功")
                         $("#context").html(data)
+                    },
+                    error:function (data){
+                        console.log("进入失败")
                     }
                 })
             }
@@ -132,10 +136,16 @@
 </script>
 <script language="javascript">
     //防止页面后退
-    history.pushState(null, null, document.URL);
-    window.addEventListener('popstate', function () {
-        history.pushState(null, null, document.URL);
-    });
+    $(function() {
+        if (window.history && window.history.pushState) {
+            $(window).on('popstate', function () {
+                window.history.pushState('forward', null, '#');
+                window.history.forward(1);
+            });
+        }
+        window.history.pushState('forward', null, '#'); //在IE中必须得有这两行
+        window.history.forward(1);
+    })
 </script>
 </body>
 </html>

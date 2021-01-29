@@ -58,7 +58,7 @@ public class RoleController {
     }
 
     @PostMapping(value = "/update")
-    public String updateRole(MRole mRole){
+    public String updateRole(@RequestBody MRole mRole){
 
         int updateRole = roleService.updateRole(mRole);
         ResponseData data  =new ResponseData();

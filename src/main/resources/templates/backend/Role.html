@@ -201,7 +201,23 @@
         table.on('tool(test)', function(obj){
             let data = obj.data;
             if(obj.event === 'detail'){
-                layer.msg(JSON.stringify(data));
+                layer.open({
+                    type: 1
+                    ,offset: 'auto' //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+                    // ,id: 'layerDemo' //防止重复弹出
+                    ,content: '<div id="show_user" style="margin-top: 10px;margin-left: 20px">\n' +
+                        '    <span>角色ID：</span><span>'+data.roleId+'</span></br>\n' +
+                        '    <span>角色名称：</span><span>'+data.roleName+'</span></br>\n' +
+                        '    <span>创建时间：</span><span>'+data.createTime+'</span></br>\n' +
+                        '    <span>状态：</span><span>'+data.status+'</span></br>\n' +
+                        '</div>'
+                    ,btn: '关闭全部'
+                    ,btnAlign: 'c' //按钮居中
+                    ,shade: 0 //不显示遮罩
+                    ,yes: function(){
+                        layer.closeAll();
+                    }
+                });
             } else if(obj.event === 'del'){
                 layer.confirm('真的删除行么', function(index){
                     let roleId = data.roleId;
@@ -212,7 +228,54 @@
                     })
                 });
             } else if(obj.event === 'edit'){
-                layer.alert('编辑行：<br>'+ JSON.stringify(data))
+                layer.open({
+                    type: 1
+                    ,offset: 'auto' //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+                    // ,id: 'layerDemo' //防止重复弹出
+                    ,content: '<div id="update_data" style="margin-top: 10px;">\n' +
+                        '<div class="layui-form-item" hidden>\n' +
+                        '            <label class="layui-form-label">角色ID</label>\n' +
+                        '            <div class="layui-input-inline">\n' +
+                        '                <input type="text" id="role_id" name="id" lay-verify="required" value='+data.roleId+' disabled autocomplete="off" class="layui-input">\n' +
+                        '            </div>\n' +
+                        '        </div>'+
+                        '    <div class="layui-form-item">\n' +
+                        '        <label class="layui-form-label">角色名</label>\n' +
+                        '        <div class="layui-input-inline">\n' +
+                        '            <input type="text" id="role_name" value='+data.roleName+' name="userName" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">\n' +
+                        '        </div>\n' +
+                        '    </div>\n' +
+                        '</div>'
+                    ,btn: '提交'
+                    ,btnAlign: 'c' //按钮居中
+                    ,shade: 0 //不显示遮罩
+                    ,yes: function(){
+                        let roleId = $("#role_id").val()
+                        let roleName = $("#role_name").val()
+                        let data = {
+                            roleId: roleId,
+                            roleName: roleName
+                        }
+                        $.post({
+                            url:"/role/update",
+                            data: JSON.stringify(data),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (data){
+                                layer.closeAll();
+                                layer.msg("修改成功！")
+                                //刷新页面
+                                layui.use('table', function () {
+                                    init_table()
+                                });
+                            },
+                            error: function (data){
+                                layer.msg("修改失败")
+                            }
+                        })
+
+                    }
+                });
             }
         });
     });

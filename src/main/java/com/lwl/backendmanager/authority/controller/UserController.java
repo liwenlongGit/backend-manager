@@ -71,7 +71,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/update")
-    public String updateUser(MUser user){
+    public String updateUser(@RequestBody MUser user){
         int updateUser = userService.updateUser(user);
         ResponseData responseData = new ResponseData();
         if (updateUser ==1){

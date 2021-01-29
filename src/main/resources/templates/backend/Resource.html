@@ -215,12 +215,17 @@
                                 let menu_type = $("select[name = resourceType]").val()
                                 if (menu_type === "0"){
                                     //首先放着，什么也不做
+                                    $("#resourceId").empty()    //清空下拉框
+                                    $("#resourceId").append(new Option("请选择资源",""))
+                                    form.render() //渲染菜单
                                 }else if (menu_type === "1"){
                                     // 获取选中类型的父标签种类
                                     let url = "/resource/find?resourceType=0"
                                     $.get(url, function (data) {
+                                        $("#resourceId").empty()    //清空下拉框
+                                        $("#resourceId").append(new Option("请选择资源",""))
+                                        form.render() //渲染菜单
                                         $.each(data.data, (index,item) =>{
-                                            console.log("资源名称："+item.resourceName+"---"+item.resourceId)
                                             $("#resourceId").append(new Option( item.resourceName, item.resourceId))
                                         })
                                         form.render() //渲染菜单
@@ -228,6 +233,9 @@
                                 }else if (menu_type === "2"){
                                     let url = "/resource/find?resourceType=1"
                                     $.get(url, function (data) {
+                                        $("#resourceId").empty()    //清空下拉框
+                                        $("#resourceId").append(new Option("请选择资源",""))
+                                        form.render() //渲染菜单
                                         $.each(data.data, (index,item) =>{
                                             console.log("资源名称："+item.resourceName+"---"+item.resourceId)
                                             $("#resourceId").append(new Option( item.resourceName, item.resourceId))
@@ -267,7 +275,24 @@
         table.on('tool(test)', function (obj) {
             let data=obj.data;
             if (obj.event === 'detail') {
-                layer.msg(JSON.stringify(data));
+                layer.open({
+                    type: 1
+                    ,offset: 'auto' //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+                    // ,id: 'layerDemo' //防止重复弹出
+                    ,content: '<div id="show_user" style="margin-top: 10px;margin-left: 20px">\n' +
+                        '    <span>资源ID：</span><span>'+data.resourceId+'</span></br>\n' +
+                        '    <span>资源名称：</span><span>'+data.resourceName+'</span></br>\n' +
+                        '    <span>资源类型：</span><span>'+data.resourceType+'</span></br>\n' +
+                        '    <span>父资源：</span><span>'+data.parentId+'</span></br>\n' +
+                        '    <span>创建时间：</span><span>'+data.createTime+'</span></br>\n' +
+                        '</div>'
+                    ,btn: '关闭全部'
+                    ,btnAlign: 'c' //按钮居中
+                    ,shade: 0 //不显示遮罩
+                    ,yes: function(){
+                        layer.closeAll();
+                    }
+                });
             } else if (obj.event === 'del') {
                 layer.confirm('真的删除行么', function (index) {
                     let resourceId=data.resourceId;
@@ -278,18 +303,125 @@
                     })
                 });
             } else if (obj.event === 'edit') {
-                layer.alert('编辑行：<br>' + JSON.stringify(data))
+                layer.open({
+                    type: 1
+                    ,offset: 'auto' //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
+                    // ,id: 'layerDemo' //防止重复弹出
+                    ,content: '<div id="update_data" style="margin-top: 10px;height: 400px">\n' +
+                        '    <form class="layui-form" action="">\n' +
+                        '<div class="layui-form-item" hidden>\n' +
+                        '            <label class="layui-form-label">资源ID</label>\n' +
+                        '            <div class="layui-input-inline">\n' +
+                        '                <input type="text" id="resource_id" name="id" lay-verify="required" value='+data.resourceId+' disabled autocomplete="off" class="layui-input">\n' +
+                        '            </div>\n' +
+                        '        </div>'+
+                        '    <div class="layui-form-item">\n' +
+                        '        <label class="layui-form-label">资源名称</label>\n' +
+                        '        <div class="layui-input-inline">\n' +
+                        '            <input type="text" id="resource_name" value='+data.resourceName+' name="userName" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">\n' +
+                        '        </div>\n' +
+                        '    </div>\n' +
+                        '    <div class="layui-form-item">\n' +
+                        '        <div class="layui-inline" id="resource_select">\n' +
+                        '            <label class="layui-form-label">资源类型</label>\n' +
+                        '            <div class="layui-input-inline">\n' +
+                        '                <select id="resource_Type" name="resourceType" lay-verify="required"  lay-filter="menu_type" class="select">\n' +
+                        '                    <option value="">请选择资源类型</option>\n' +
+                        '                        <option value="0">导航</option>\n' +
+                        '                        <option value="1">页面</option>\n' +
+                        '                        <option value="2">按钮</option>\n' +
+                        '                </select>\n' +
+                        '            </div>\n' +
+                        '        </div>\n' +
+                        '    </div>\n' +
+                        '    <div class="layui-form-item">\n' +
+                        '        <div class="layui-inline">\n' +
+                        '            <label class="layui-form-label">父资源</label>\n' +
+                        '            <div class="layui-input-inline">\n' +
+                        '                <select id="parent_id" name="resourceId" id="parent_menu">\n' +
+                        '                    <option value="">请选择父资源</option>\n' +
+                        '                </select>\n' +
+                        '            </div>\n' +
+                        '        </div>\n' +
+                        '    </div>\n' +
+                        '    </form>\n' +
+                        '</div>'
+                    ,btn: '提交'
+                    ,btnAlign: 'c' //按钮居中
+                    ,shade: 0 //不显示遮罩
+                    ,success: function () {
+                        // 设置下拉框内容
+                        $("#resource_Type").val(data.resourceType)
+                        $("#parent_id").append(new Option(data.parentId,data.parentId))
+
+                        // 显示层加载成功
+                        let form = layui.form;
+                        form.render();
+                        form.on("select(menu_type)",(obj)=>{
+                            let menu_type = $("select[name = resourceType]").val()
+                            if (menu_type === "0"){
+                                //首先放着，什么也不做
+                                $("#resourceId").empty()    //清空下拉框
+                                $("#resourceId").append(new Option("请选择资源",""))
+                                form.render() //渲染菜单
+                            }else if (menu_type === "1"){
+                                // 获取选中类型的父标签种类
+                                let url = "/resource/find?resourceType=0"
+                                $.get(url, function (data) {
+                                    $("#parent_id").empty()    //清空下拉框
+                                    $("#parent_id").append(new Option("请选择资源",""))
+                                    form.render() //渲染菜单
+                                    $.each(data.data, (index,item) =>{
+                                        $("#parent_id").append(new Option( item.resourceName, item.resourceId))
+                                    })
+                                    form.render() //渲染菜单
+                                })
+                            }else if (menu_type === "2"){
+                                let url = "/resource/find?resourceType=1"
+                                $.get(url, function (data) {
+                                    $("#parent_id").empty()    //清空下拉框
+                                    $("#parent_id").append(new Option("请选择资源",""))
+                                    form.render() //渲染菜单
+                                    $.each(data.data, (index,item) =>{
+                                        $("#parent_id").append(new Option( item.resourceName, item.resourceId))
+                                    })
+                                    form.render() //渲染菜单
+                                })
+                            }
+                        })
+                    }
+                    ,yes: function(){
+                        let resourceId = $("#resource_id").val()
+                        let resourceName = $("#resource_name").val()
+                        let resourceType = $("#resource_Type").val()
+                        let parentId = $("#parent_id").val()
+                        let data = {
+                            resourceId: resourceId,
+                            resourceName: resourceName,
+                            resourceType: resourceType,
+                            parentId: parentId
+                        }
+                        $.post({
+                            url:"/resource/update",
+                            data: JSON.stringify(data),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (data){
+                                layer.closeAll();
+                                layer.msg("修改成功！")
+                                //刷新页面
+                                layui.use('table', function () {
+                                    init_table()
+                                });
+                            },
+                            error: function (data){
+                                layer.msg("修改失败")
+                            }
+                        })
+
+                    }
+                });
             }
         });
     });
-
-    function search_men(type) {
-        let url = "/resource/find?resourceType="+type
-        $.get(url, function (data) {
-            $.each(data.data, (index,item) =>{
-                console.log("资源名称："+item.resourceName)
-                $("#parentId").append(new Option(item.resourceId, item.resourceName))
-            })
-        })
-    }
 </script>
