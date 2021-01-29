@@ -114,14 +114,33 @@
             , cols: [
                 [
                     {type: 'checkbox'}
-                    , {field: 'resourceId', width: 280, title: 'ID'}
+                    , {field: 'resourceId', width: 280, title: 'ID', hide:true}
                     , {field: 'resourceName', width: 180, title: '资源名'}
                     , {field: 'resourceType', width: 180, title: '资源类型'}
-                    , {field: 'parentId', width: 180, title: '父资源'}
-                    , {field: 'createTime', width: 250, title: '创建时间'}
+                    , {field: 'parentId', width: 180, title: '父资源id', hide:true}
+                    , {field: 'parentName', width: 180, title: '父资源'}
+                    // , {field: 'createTime', width: 250, title: '创建时间'}
+                    , {field: 'createTime', title: '创建时间', width:250, templet:'<div>{{ layui.util.toDateString(d.pressTime, "yyyy-MM-dd HH:mm:ss") }}</div>'}
                     , {field: '', width: 250, title: '编辑', align: 'center', toolbar: '#barDemo'}
                 ]
             ]
+            ,done:(res,curr,count)=>{
+                // console.log(res) // 请求数据
+                // console.log(curr)    //当前页
+                // console.log(count)   //总条数
+                $("[data-field='resourceType']").children().each(function(){
+                    if($(this).text()==='0'){
+                        $(this).text("菜单")
+                    }else if($(this).text()==='1'){
+                        $(this).text("页面")
+                    }else if ($(this).text() === '2'){
+                        $(this).text("按钮")
+                    }else{
+                        $(this).text("未知类型")
+                    }
+                });
+
+            }
             , id: 'testReload'
             , page: true
         });

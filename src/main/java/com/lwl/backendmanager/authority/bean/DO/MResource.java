@@ -27,6 +27,8 @@ public class MResource implements Serializable {
 
     private String parentId;
 
+    private String parentName;
+
     private boolean status;
 
     private static final long serialVersionUID = 1L;

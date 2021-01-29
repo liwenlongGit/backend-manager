@@ -2,6 +2,8 @@ package com.lwl.backendmanager.authority.bean.DO;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -35,6 +37,8 @@ public class MUser implements Serializable {
     private String headPhoto;
 
     private boolean status;
+
+    private List<String> roles;
 
     private static final long serialVersionUID = 1L;
 }

@@ -108,8 +108,9 @@
             , cols: [
                 [
                     {type: 'checkbox'}
-                    , {field: 'roleId', width: 280, title: 'ID'}
+                    , {field: 'roleId', width: 280, title: 'ID', hide:true}
                     , {field: 'roleName', width: 280, title: '用户名'}
+                    , {field: 'createTime', title: '创建时间', width:250, templet:'<div>{{ layui.util.toDateString(d.pressTime, "yyyy-MM-dd HH:mm:ss") }}</div>'}
                     , {field: '', width: 250, title: '编辑', align:'center', toolbar: '#barDemo'}
                 ]
             ]

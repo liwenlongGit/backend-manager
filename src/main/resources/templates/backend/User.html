@@ -109,13 +109,13 @@
             , cols: [
                 [
                     {type: 'checkbox'}
-                    , {field: 'userId', width: 180, title: 'ID'}
+                    , {field: 'userId', width: 180, title: 'ID', hide:true}
                     , {field: 'userName', width: 80, title: '用户名'}
                     , {field: 'snake', width: 180, title: '昵称'}
                     , {field: 'email', width: 180, title: '邮箱'}
                     , {field: 'phone', width: 180, title: '手机'}
                     , {field: 'idCard', width: 250, title: '身份证号'}
-                    , {field: 'createTime', width: 250, title: '创建时间'}
+                    , {field: 'createTime', title: '创建时间', width:250, templet:'<div>{{ layui.util.toDateString(d.pressTime, "yyyy-MM-dd HH:mm:ss") }}</div>'}
                     , {field: '', width: 250, title: '编辑', align:'center', toolbar: '#barDemo'}
                 ]
             ]
@@ -172,7 +172,7 @@
                     type: 1
                     , offset: type //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
                     , id: 'layerDemo' + type //防止重复弹出
-                    , content: '<div id="register_context" style="width: 400px;"\n' +
+                    , content: '<div id="register_context" style="width: 359px;height: 500px"\n' +
                         '    <form class="layui-form">\n' +
                         '        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">\n' +
                         '            <legend>添加用户</legend>\n' +
@@ -230,11 +230,31 @@
                         '                       autocomplete="off" class="layui-input">\n' +
                         '            </div>\n' +
                         '        </div>\n' +
+                        '        <div class="layui-inline">\n' +
+                        '            <label class="layui-form-label">角色</label>\n' +
+                        '            <div  class="layui-input-inline">\n' +
+                        '               <div id="user_role_u" class="xm-select-demo" style="width: 190px"></div>\n' +
+                        '            </div>\n' +
+                        '        </div>' +
                         '    </form>\n' +
                         '</div>'
                     , btn: '提交'
                     , btnAlign: 'c' //按钮居中
                     , shade: 0 //不显示遮罩
+                    ,success:()=>{
+                        $.get("/role/find",(data)=>{
+                            let roles = []
+                            $.each(JSON.parse(data).data, (index, item)=>{
+                                roles.push({"name":item.roleName,"value":item.roleId})
+                            })
+                            console.log(roles)
+                            //初始化下拉框
+                            xmSelect.render({
+                                el: '#user_role_u',
+                                data: roles
+                            })
+                        })
+                    }
                     , yes: function () {
                         add_data()
                         layer.closeAll();
@@ -298,7 +318,8 @@
                     type: 1
                     ,offset: 'auto' //具体配置参考：http://www.layui.com/doc/modules/layer.html#offset
                     // ,id: 'layerDemo' //防止重复弹出
-                    ,content: '<div id="update_data" style="margin-top: 10px;">\n' +
+                    ,content: '<div id="update_data" style="margin-top: 10px; width: 359px;height: 550px">\n' +
+                        '<form class="layui-form" action="">' +
                             '<div class="layui-form-item" hidden>\n' +
                         '            <label class="layui-form-label">用户ID</label>\n' +
                         '            <div class="layui-input-inline">\n' +
@@ -339,10 +360,31 @@
                             '            <input type="text" id="user_idcard" value='+data.idCard+' name="idCard" lay-verify="required|number" placeholder="请输入身份证" autocomplete="off" class="layui-input">\n' +
                             '        </div>\n' +
                             '    </div>\n' +
+                            '    <div class="layui-inline">\n' +
+                            '        <label class="layui-form-label">角色</label>\n' +
+                            '        <div  class="layui-input-inline">\n' +
+                            '           <div id="user_role_u" class="xm-select-demo" style="width: 190px"></div>\n' +
+                            '        </div>\n' +
+                            '    </div>' +
+                            '</form>'+
                             '</div>'
                     ,btn: '提交'
                     ,btnAlign: 'c' //按钮居中
                     ,shade: 0 //不显示遮罩
+                    ,success:function (){   // 弹出层弹出成功之后执行
+                        $.get("/role/find",(data)=>{
+                            let roles = []
+                            $.each(JSON.parse(data).data, (index, item)=>{
+                                roles.push({"name":item.roleName,"value":item.roleId})
+                            })
+                            console.log(roles)
+                            //初始化下拉框
+                            xmSelect.render({
+                                el: '#user_role_u',
+                                data: roles
+                            })
+                        })
+                    }
                     ,yes: function(){
                         let userId = $("#user_id").val()
                         let userName = $("#user_name").val()

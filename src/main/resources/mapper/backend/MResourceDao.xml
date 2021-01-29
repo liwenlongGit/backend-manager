@@ -9,21 +9,30 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="creater" jdbcType="VARCHAR" property="creater" />
     <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+    <result column="parent_name" jdbcType="VARCHAR" property="parentName" />
     <result column="status" jdbcType="VARCHAR" property="status" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, resource_id, resource_name, resource_type, create_time, creater, parent_id,`status`
+    m.id,
+    m.resource_id,
+    m.resource_name,
+    m.parent_id,
+    p.resource_name as parent_name,
+    m.resource_type,
+    m.create_time,
+    m.creater,
+    m.`status`
   </sql>
   <select id="selectByPrimaryKey" parameterType="com.lwl.backendmanager.authority.bean.DO.MResource" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from m_resource
-    where `status` = 0
+    from m_resource m left join m_resource p on m.parent_id = p.resource_id
+    where m.`status` = 0
     <if test="resourceName != null">
-      and resource_name = #{resourceName,jdbcType=VARCHAR}
+      and m.resource_name = #{resourceName,jdbcType=VARCHAR}
     </if>
     <if test="resourceType != null">
-      and resource_type = #{resourceType,jdbcType=SMALLINT}
+      and m.resource_type = #{resourceType,jdbcType=SMALLINT}
     </if>
   </select>
 
