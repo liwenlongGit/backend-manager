@@ -104,4 +104,15 @@
       update m_role set `status` = 1 where role_id = #{role.roleId,jdbcType=VARCHAR}
     </foreach>
   </update>
+
+  <!--角色资源关系表-->
+  <insert id="saveRoleResource">
+    insert into m_role_resource (role_id,resource_id) values
+    <foreach collection="resources" separator="," item="resource" index="index" >
+      (#{roleId}, #{resource.resourceId})
+    </foreach>
+  </insert>
+  <delete id="deleteRoleResource" parameterType="String">
+    delete from m_role_resource where role_id = #{roleId}
+  </delete>
 </mapper>

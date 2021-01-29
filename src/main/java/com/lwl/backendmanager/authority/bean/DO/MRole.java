@@ -2,6 +2,8 @@ package com.lwl.backendmanager.authority.bean.DO;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -21,6 +23,8 @@ public class MRole implements Serializable {
     private String creater;
 
     private boolean status;
+
+    private List<String> resources;
 
     private static final long serialVersionUID = 1L;
 }

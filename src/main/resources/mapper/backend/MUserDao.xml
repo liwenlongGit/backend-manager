@@ -191,4 +191,15 @@
       update m_user set `status` = 1 where user_id = #{user.userId,jdbcType=VARCHAR}
     </foreach>
   </update>
+
+  <!--用户角色中间表-->
+  <insert id="saveUserRole">
+    insert into m_user_role(user_id,role_id) values
+    <foreach collection="roles" index="index" item="role" separator=",">
+        (#{userId},#{role.roleId})
+    </foreach>
+  </insert>
+  <delete id="deleteUserRole" parameterType="String" >
+    delete from m_user_role where user_id = #{userId}
+  </delete>
 </mapper>

@@ -66,4 +66,19 @@ public interface MUserDao {
     int updateByPrimaryKey(MUser record);
 
     int batchDel(@Param("users") List<MUser> users);
+
+    /**
+     * 绑定用户和角色关系
+     * @param roles
+     * @param userId
+     * @return
+     */
+    int saveUserRole(@Param("roles") List<String> roles,@Param("userId") String userId);
+
+    /**
+     * 删除用户角色关系
+     * @param userId
+     * @return
+     */
+    int deleteUserRole(@Param("userId") String userId);
 }

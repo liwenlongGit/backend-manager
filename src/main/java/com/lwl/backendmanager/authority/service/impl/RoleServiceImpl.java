@@ -8,7 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -23,13 +26,37 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int addRole(MRole mRole) {
-        return mRoleDao.insertSelective(mRole);
+        int insertSelective = mRoleDao.insertSelective(mRole);
+        if (insertSelective > 0 && !mRole.getResources().isEmpty()){
+            int saveRoleResource = mRoleDao.saveRoleResource(mRole.getResources(), mRole.getRoleId());
+            if (saveRoleResource == 0){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                insertSelective = 0;
+            }
+        }
+        return insertSelective;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateRole(MRole mRole) {
-        return mRoleDao.updateByPrimaryKeySelective(mRole);
+        int update = mRoleDao.updateByPrimaryKeySelective(mRole);
+        if (update > 0){
+            List<String> resources = new ArrayList<>();
+            boolean retain = mRole.getResources().stream().collect(Collectors.joining())
+                    .equals(resources.stream().collect(Collectors.joining()));
+            if (!retain){
+                // 如果两个集合不相同，需要修改角色资源关系，先删再插。后续靠，考虑其他方式
+                int resource = mRoleDao.deleteRoleResource(mRole.getRoleId());
+                int roleResource = mRoleDao.saveRoleResource(mRole.getResources(), mRole.getRoleId());
+                if (resource == 0 || roleResource == 0){
+                    // 必须两个操作全部成功，否则回滚事务
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    update = 0;
+                }
+            }
+        }
+        return update;
     }
 
     @Override

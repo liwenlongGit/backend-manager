@@ -20,5 +20,25 @@ public interface MRoleDao {
 
     int updateByPrimaryKey(MRole record);
 
+    /**
+     * 批量删除角色
+     * @param mRole
+     * @return
+     */
     int batchDelete(@Param("roles") List<MRole> mRole);
+
+    /**
+     * 插入角色资源关系
+     * @param resources
+     * @param roleId
+     * @return
+     */
+    int saveRoleResource(@Param("resources") List<String> resources,@Param("roleId") String roleId);
+
+    /**
+     * 删除角色资源关系
+     * @param roleId
+     * @return
+     */
+    int deleteRoleResource(@Param("roleId") String roleId);
 }
